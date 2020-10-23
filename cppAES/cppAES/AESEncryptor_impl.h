@@ -1,3 +1,4 @@
+#include "AESEncryptor.h"
 using StrCIter = std::string::const_iterator;
 
 template <size_t KeySize>
@@ -10,9 +11,8 @@ template <size_t KeySize>
 AESEncryptor<KeySize>::AESEncryptor(const std::string& inputData)
 {
 	this->numBlocks = (inputData.size() / N) + (inputData.size() % N ? 1 : 0);
-	this->data.resize(this->numBlocks, std::string(N, '\0'));
+	this->data.resize(this->numBlocks, std::string(N, '0'));
 	SplitData(inputData);
-	PadBlock(this->numBlocks - 1);
 }
 
 template <size_t KeySize>
@@ -46,16 +46,20 @@ std::string_view AESEncryptor<KeySize>::GetBlock(size_t idx) const
 }
 
 template<size_t KeySize>
-void AESEncryptor<KeySize>::PadBlock(size_t idx)
-{
-	if (this->data[idx].size() == N)
-		return;
-
-	this->data[idx].resize(N);
-}
-
-template<size_t KeySize>
 void AESEncryptor<KeySize>::load(const std::string& x)
 {
 	*this = AESEncryptor{ x };
+}
+
+template<size_t KeySize>
+inline void AESEncryptor<KeySize>::loadFile(const std::string& fName)
+{
+	std::ifstream f1(fName);
+	if (!f1)
+	{
+		throw std::invalid_argument("Could not open the file.\n");
+	}
+	std::string ss;
+	std::getline(f1, ss, char{ EOF });
+	this->load(ss);
 }
