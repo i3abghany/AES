@@ -34,6 +34,10 @@ private:
 	std::string ShiftRows(const std::string&);
 	std::string MixColumns(const std::string&);
 
+	uint8_t GMul1(const uint8_t);
+	uint8_t GMul2(const uint8_t);
+	uint8_t GMul3(const uint8_t);
+
 private:
 	void SplitData(const std::string&);
 

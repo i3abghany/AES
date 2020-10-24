@@ -1,3 +1,4 @@
+#include "AESEncryptor.h"
 #pragma once
 using StrCIter = std::string::const_iterator;
 
@@ -145,26 +146,45 @@ inline std::string AESEncryptor<KeySize>::MixColumns(const std::string& state)
 	auto& s = state;
 	std::string res;
 	res.resize(16);
-	res[0] = G2Mul[s[0]] ^ G3Mul[s[1]] ^ s[2] ^ s[3];
-	res[1] = s[0] ^ G2Mul[s[1]] ^ G3Mul[s[2]] ^ s[3];
-	res[2] = s[0] ^ s[1] ^ G2Mul[s[2]] ^ G3Mul[s[3]];
-	res[3] = G3Mul[s[0]] ^ s[1] ^ s[2] ^ G2Mul[s[3]];
+	res[0]  = GMul2(s[0]) ^ GMul3(s[1]) ^ GMul1(s[2]) ^ GMul1(s[3]);
+	res[1]  = GMul1(s[0]) ^ GMul2(s[1]) ^ GMul3(s[2]) ^ GMul1(s[3]);
+	res[2]  = GMul1(s[0]) ^ GMul1(s[1]) ^ GMul2(s[2]) ^ GMul3(s[3]);
+	res[3]  = GMul3(s[0]) ^ GMul1(s[1]) ^ GMul1(s[2]) ^ GMul2(s[3]);
 
-	res[4] = G2Mul[s[4]] ^ G3Mul[s[5]] ^ s[6] ^ s[7];
-	res[5] = s[4] ^ G2Mul[s[5]] ^ G3Mul[s[6]] ^ s[7];
-	res[6] = s[4] ^ s[5] ^ G2Mul[s[6]] ^ G3Mul[s[7]];
-	res[7] = G3Mul[s[4]] ^ s[5] ^ s[6] ^ G2Mul[s[7]];
+	res[4]  = GMul2(s[4]) ^ GMul3(s[5]) ^ GMul1(s[6]) ^ GMul1(s[7]);
+	res[5]  = GMul1(s[4]) ^ GMul2(s[5]) ^ GMul3(s[6]) ^ GMul1(s[7]);
+	res[6]  = GMul1(s[4]) ^ GMul1(s[5]) ^ GMul2(s[6]) ^ GMul3(s[7]);
+	res[7]  = GMul3(s[4]) ^ GMul1(s[5]) ^ GMul1(s[6]) ^ GMul2(s[7]);
 
-	res[8] = G2Mul[s[8]] ^ G3Mul[s[9]] ^ s[10] ^ s[11];
-	res[9] = s[8] ^ G2Mul[s[9]] ^ G3Mul[s[10]] ^ s[11];
-	res[10] = s[8] ^ s[9] ^ G2Mul[s[10]] ^ G3Mul[s[11]];
-	res[11] = G3Mul[s[8]] ^ s[9] ^ s[10] ^ G2Mul[s[11]];
+	res[8]  = GMul2(s[8]) ^ GMul3(s[9]) ^ GMul1(s[10]) ^ GMul1(s[11]);
+	res[9]  = GMul1(s[8]) ^ GMul2(s[9]) ^ GMul3(s[10]) ^ GMul1(s[11]);
+	res[10] = GMul1(s[8]) ^ GMul1(s[9]) ^ GMul2(s[10]) ^ GMul3(s[11]);
+	res[11] = GMul3(s[8]) ^ GMul1(s[9]) ^ GMul1(s[10]) ^ GMul2(s[11]);
 
-	res[12] = G2Mul[s[12]] ^ G3Mul[s[13]] ^ s[14] ^ s[15];
-	res[13] = s[12] ^ G2Mul[s[13]] ^ G3Mul[s[14]] ^ s[15];
-	res[14] = s[12] ^ s[13] ^ G2Mul[s[14]] ^ G3Mul[s[15]];
-	res[15] = G3Mul[s[12]] ^ s[13] ^ s[14] ^ G2Mul[s[15]];
+	res[12] = GMul2(s[12]) ^ GMul3(s[13]) ^ GMul1(s[14]) ^ GMul1(s[15]);
+	res[13] = GMul1(s[12]) ^ GMul2(s[13]) ^ GMul3(s[14]) ^ GMul1(s[15]);
+	res[14] = GMul1(s[12]) ^ GMul1(s[13]) ^ GMul2(s[14]) ^ GMul3(s[15]);
+	res[15] = GMul3(s[12]) ^ GMul1(s[13]) ^ GMul1(s[14]) ^ GMul2(s[15]);
 
 
 	return res;
 }
+
+template<size_t KeySize>
+inline uint8_t AESEncryptor<KeySize>::GMul1(const uint8_t b)
+{
+	return uint8_t(b);
+}
+
+template<size_t KeySize>
+inline uint8_t AESEncryptor<KeySize>::GMul2(const uint8_t b)
+{
+	return uint8_t(G2Mul[b]);
+}
+
+template<size_t KeySize>
+inline uint8_t AESEncryptor<KeySize>::GMul3(const uint8_t b)
+{
+	return uint8_t(G3Mul[b]);
+}
+
