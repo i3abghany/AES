@@ -1,7 +1,6 @@
 #pragma once
 
 #include "AESEncryptor.h"
-using StrCIter = std::string::const_iterator;
 
 template <size_t KeySize>
 AESEncryptor<KeySize>::AESEncryptor()
@@ -25,7 +24,6 @@ AESEncryptor<KeySize>::AESEncryptor(const std::string& inputData, const std::str
 	this->numRounds = (KeySize == 16U) ? 10 :
 		(KeySize == 24U) ? 12 :
 		14;
-
 	GenerateKeys();
 }
 
@@ -224,6 +222,30 @@ inline uint8_t AESEncryptor<KeySize>::GMul3(const uint8_t b)
 }
 
 
+template<size_t KeySize>
+inline std::string AESEncryptor<KeySize>::Encrypt()
+{
+	for (int blk = 0; blk < numBlocks; blk++)
+	{ 
+		auto &bi = data[blk];
+		bi = AddRoundKey(bi, SubKeys[0]);
+		for (int i = 1; i < numRounds; i++)
+		{
+			bi = SubBytes(bi);
+			bi = ShiftRows(bi);
+			bi = MixColumns(bi);
+			bi = AddRoundKey(bi, SubKeys[i]);
+		}
+
+		bi = SubBytes(bi);
+		bi = ShiftRows(bi);
+		bi = AddRoundKey(bi, SubKeys[numRounds]);
+		this->encData.append(bi);
+	}
+
+	return this->encData;
+}
+
 template<>
 inline void AESEncryptor<16U>::GenerateKeys()
 {
@@ -249,7 +271,8 @@ inline void AESEncryptor<16U>::GenerateKeys()
 
 		SubKeys[i] = CombineWords(Wi0, Wi1, Wi2, Wi3);
 	}
-	
+
+#ifdef DEBUG
 	for (int i = 0; i < SubKeys.size(); i++)
 	{
 		for (int j = 0; j < SubKeys[i].size(); j++)
@@ -258,6 +281,7 @@ inline void AESEncryptor<16U>::GenerateKeys()
 		}
 		std::cout << std::endl;
 	}
+#endif
 }
 
 

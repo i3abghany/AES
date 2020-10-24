@@ -8,6 +8,10 @@
 int main()
 {
 	AESEncryptor<16U> aes{
-		"Critical Annihilation", "Thats my Kung Fu"
+		"This Cake is a Lie", "Thats my Kung Fu"
 	};
+
+	std::string enc = aes.Encrypt();
+
+	return 0;
 }

@@ -26,9 +26,9 @@ public:
 	void load(const std::string&);
 	void loadFile(const std::string&);
 
+	std::string Encrypt(); // TODO: Implement.
+
 private:
-public:
-	void Encrypt(); // TODO: Implement.
 
 	void GenerateKeys();
 	std::string XORStr(const std::string&, const std::string&);
@@ -53,7 +53,10 @@ private:
 private:
 	size_t numBlocks;
 	uint8_t numRounds;
+
 	std::vector<std::string> data; // data stored in chars (bytes), organized as blocks (each block in a string.)
+	std::string encData;
+
 	std::string key;
 	std::vector<std::string> SubKeys;
 	static uint8_t SBox [(1U << 8)];
@@ -67,4 +70,3 @@ private:
 #include "G2Mul.h"
 #include "G3Mul.h"
 #include "AESEncryptor_impl.h"
-
