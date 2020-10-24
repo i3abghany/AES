@@ -5,6 +5,8 @@
 #include <iterator>
 #include <string_view>
 #include <fstream>
+#include <cstdint>
+#include <array>
 
 template <size_t KeySize = 16U>
 class AESEncryptor
@@ -12,7 +14,7 @@ class AESEncryptor
 	static_assert(KeySize == 16U || KeySize == 24U || KeySize == 32U, "Only 16-, 24-, and 32-byte keys are allowed.");
 private:
 	using StrCIter = std::string::const_iterator;
-	static constexpr size_t N = 128U;  // Block Size.
+	static constexpr size_t N = 16U;  // Block Size.
 
 public:
 	AESEncryptor();
@@ -24,11 +26,27 @@ public:
 	void loadFile(const std::string&);
 
 private:
+	void Encrypt(); // TODO: Implement.
+
+	std::string AddRoundKey(const std::string&, const std::string&);
+
+	std::string SubBytes(const std::string&);
+	std::string ShiftRows(const std::string&);
+	std::string MixColumns(const std::string&);
+
+private:
 	void SplitData(const std::string&);
 
 private:
-	std::vector<std::string> data; // data stored in chars (bytes).
 	size_t numBlocks;
+	uint8_t numRounds;
+	std::vector<std::string> data; // data stored in chars (bytes).
+	static uint8_t SBox[(1U << 8)];
+	static uint8_t G2Mul[(1U << 8)];
+	static uint8_t G3Mul[(1U << 8)];
 };
 
 #include "AESEncryptor_impl.h"
+#include "G2Mul.h"
+#include "G3Mul.h"
+#include "SBox.h"
