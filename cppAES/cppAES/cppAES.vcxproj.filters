@@ -35,5 +35,8 @@
     <ClInclude Include="G3Mul.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,19 +1,32 @@
-#include "AESEncryptor.h"
 #pragma once
+
+#include "AESEncryptor.h"
 using StrCIter = std::string::const_iterator;
 
 template <size_t KeySize>
 AESEncryptor<KeySize>::AESEncryptor()
 {
 	this->data = std::vector<std::string>{};
+	this->key = std::string{};
 }
 
 template <size_t KeySize>
-AESEncryptor<KeySize>::AESEncryptor(const std::string& inputData)
+AESEncryptor<KeySize>::AESEncryptor(const std::string& inputData, const std::string& key)
 {
+	if (key.size() != KeySize)
+	{
+		throw std::invalid_argument("KeySize is not the same as the size of the provided key.\n");
+	}
+	this->key = std::move(key);
 	this->numBlocks = (inputData.size() / N) + (inputData.size() % N ? 1 : 0);
 	this->data.resize(this->numBlocks, std::string(N, '0'));
 	SplitData(inputData);
+
+	this->numRounds = (KeySize == 16U) ? 10 :
+		(KeySize == 24U) ? 12 :
+		14;
+
+	GenerateKeys();
 }
 
 template <size_t KeySize>
@@ -84,7 +97,7 @@ inline std::string AESEncryptor<KeySize>::SubBytes(const std::string& state)
 	res.resize(16);
 	for (size_t i = 0; i < N; i++)
 	{
-		res[i] = SBox[state[i]];
+		res[i] = SBox[(uint8_t)state[i]];
 	}
 	return res;
 }
@@ -146,6 +159,7 @@ inline std::string AESEncryptor<KeySize>::MixColumns(const std::string& state)
 	auto& s = state;
 	std::string res;
 	res.resize(16);
+
 	res[0]  = GMul2(s[0]) ^ GMul3(s[1]) ^ GMul1(s[2]) ^ GMul1(s[3]);
 	res[1]  = GMul1(s[0]) ^ GMul2(s[1]) ^ GMul3(s[2]) ^ GMul1(s[3]);
 	res[2]  = GMul1(s[0]) ^ GMul1(s[1]) ^ GMul2(s[2]) ^ GMul3(s[3]);
@@ -166,6 +180,27 @@ inline std::string AESEncryptor<KeySize>::MixColumns(const std::string& state)
 	res[14] = GMul1(s[12]) ^ GMul1(s[13]) ^ GMul2(s[14]) ^ GMul3(s[15]);
 	res[15] = GMul3(s[12]) ^ GMul1(s[13]) ^ GMul1(s[14]) ^ GMul2(s[15]);
 
+	return res;
+}
+
+template<size_t KeySize>
+inline std::string AESEncryptor<KeySize>::GBlock(const std::string& KeyWord, const uint8_t counter)
+{
+	// By definition, KeyWord must be of size 4.
+	assert(KeyWord.size() == 4);
+	std::string res(KeyWord);
+
+	uint8_t b = res[0];
+	res[0] = res[1];
+	res[1] = res[2];
+	res[2] = res[3];
+	res[3] = b;
+	for (size_t i = 0; i < 4; i++)
+	{
+		res[i] = SBox[(uint8_t)res[i]];
+	}
+
+	res[0] = res[0] ^ RC[counter];
 
 	return res;
 }
@@ -188,3 +223,71 @@ inline uint8_t AESEncryptor<KeySize>::GMul3(const uint8_t b)
 	return uint8_t(G3Mul[b]);
 }
 
+
+template<>
+inline void AESEncryptor<16U>::GenerateKeys()
+{
+	SubKeys.resize(11);
+	SubKeys[0] = key;
+	
+	std::string W0, W1, W2, W3; // initial key words.
+	std::string Wi0, Wi1, Wi2, Wi3; // subsequent keys words.
+
+	
+	
+	for (int i = 1; i <= numRounds; i++) {
+
+		W0 = GetKeyWord(SubKeys[i - 1], 0);
+		W1 = GetKeyWord(SubKeys[i - 1], 1);
+		W2 = GetKeyWord(SubKeys[i - 1], 2);
+		W3 = GetKeyWord(SubKeys[i - 1], 3);
+		
+		Wi0 = XORStr(GBlock(W3, i), W0);
+		Wi1 = XORStr(Wi0, W1);
+		Wi2 = XORStr(Wi1, W2);
+		Wi3 = XORStr(Wi2, W3);
+
+		SubKeys[i] = CombineWords(Wi0, Wi1, Wi2, Wi3);
+	}
+	
+	for (int i = 0; i < SubKeys.size(); i++)
+	{
+		for (int j = 0; j < SubKeys[i].size(); j++)
+		{
+			std::cout << std::hex << std::setfill('0') << std::uppercase << std::setw(2) << (int)(unsigned char)SubKeys[i][j] << ' ';
+		}
+		std::cout << std::endl;
+	}
+}
+
+
+template<size_t KeySize>
+inline std::string AESEncryptor<KeySize>::GetKeyWord(const std::string& k, uint8_t w)
+{
+	assert(k.size() == 16);
+	return { std::begin(k) + (w * 4), std::begin(k) + (w * 4) + 4 };
+}
+
+template<size_t KeySize>
+inline std::string AESEncryptor<KeySize>::CombineWords(const std::string& w0, const std::string& w1, const std::string& w2, const std::string& w3)
+{
+	return std::string(w0 + w1 + w2 + w3);
+}
+
+template<size_t KeySize>
+inline std::string AESEncryptor<KeySize>::XORStr(const std::string& a, const std::string& b)
+{
+	assert(a.size() == b.size());
+
+	const size_t sz = a.size();
+
+	std::string res;
+	res.resize(sz);
+
+	for (int i = 0; i < sz; i++)
+	{
+		res[i] = static_cast<uint8_t>(a[i] ^ b[i]);
+	}
+
+	return res;
+}

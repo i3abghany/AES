@@ -7,5 +7,7 @@
 
 int main()
 {
-
+	AESEncryptor<16U> aes{
+		"Critical Annihilation", "Thats my Kung Fu"
+	};
 }

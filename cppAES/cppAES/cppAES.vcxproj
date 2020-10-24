@@ -131,6 +131,7 @@
     <ClInclude Include="AESEncryptor_impl.h" />
     <ClInclude Include="G2Mul.h" />
     <ClInclude Include="G3Mul.h" />
+    <ClInclude Include="RC.h" />
     <ClInclude Include="SBox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
