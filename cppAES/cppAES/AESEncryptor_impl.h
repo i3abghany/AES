@@ -272,7 +272,7 @@ inline void AESEncryptor<16U>::GenerateKeys()
 		SubKeys[i] = CombineWords(Wi0, Wi1, Wi2, Wi3);
 	}
 
-#ifdef DEBUG
+#ifdef DEBUG_KEYS
 	for (int i = 0; i < SubKeys.size(); i++)
 	{
 		for (int j = 0; j < SubKeys[i].size(); j++)
