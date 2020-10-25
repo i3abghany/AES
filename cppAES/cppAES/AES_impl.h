@@ -1,16 +1,16 @@
 #pragma once
 
-#include "AESEncryptor.h"
+#include "AES.h"
 
 template <size_t KeySize>
-AESEncryptor<KeySize>::AESEncryptor()
+AES<KeySize>::AES()
 {
 	this->data = std::vector<std::string>{};
 	this->key = std::string{};
 }
 
 template <size_t KeySize>
-AESEncryptor<KeySize>::AESEncryptor(const std::string& inputData, const std::string& key)
+AES<KeySize>::AES(const std::string& inputData, const std::string& key)
 {
 	if (key.size() != KeySize)
 	{
@@ -28,7 +28,7 @@ AESEncryptor<KeySize>::AESEncryptor(const std::string& inputData, const std::str
 }
 
 template <size_t KeySize>
-void AESEncryptor<KeySize>::SplitData(const std::string& inputData)
+void AES<KeySize>::SplitData(const std::string& inputData)
 {
 	for (int i = 0; i < this->numBlocks; i++)
 	{
@@ -42,13 +42,13 @@ void AESEncryptor<KeySize>::SplitData(const std::string& inputData)
 }
 
 template <size_t KeySize>
-size_t AESEncryptor<KeySize>::blocks() const
+size_t AES<KeySize>::blocks() const
 {
 	return this->numBlocks;
 }
 
 template <size_t KeySize>
-std::string_view AESEncryptor<KeySize>::GetBlock(size_t idx) const
+std::string_view AES<KeySize>::GetBlock(size_t idx) const
 {
 	if (idx >= numBlocks)
 	{
@@ -58,13 +58,13 @@ std::string_view AESEncryptor<KeySize>::GetBlock(size_t idx) const
 }
 
 template<size_t KeySize>
-void AESEncryptor<KeySize>::load(const std::string& x)
+void AES<KeySize>::load(const std::string& x)
 {
-	*this = AESEncryptor{ x };
+	*this = AES{ x };
 }
 
 template<size_t KeySize>
-inline void AESEncryptor<KeySize>::loadFile(const std::string& fName)
+inline void AES<KeySize>::loadFile(const std::string& fName)
 {
 	std::ifstream f1(fName);
 	if (!f1)
@@ -77,7 +77,7 @@ inline void AESEncryptor<KeySize>::loadFile(const std::string& fName)
 }
 
 template<size_t KeySize>
-inline std::string AESEncryptor<KeySize>::AddRoundKey(const std::string& state, const std::string& key)
+inline std::string AES<KeySize>::AddRoundKey(const std::string& state, const std::string& key)
 {
 	std::string res;
 	res.resize(16);
@@ -89,7 +89,7 @@ inline std::string AESEncryptor<KeySize>::AddRoundKey(const std::string& state, 
 }
 
 template<size_t KeySize>
-inline std::string AESEncryptor<KeySize>::SubBytes(const std::string& state)
+inline std::string AES<KeySize>::SubBytes(const std::string& state)
 {
 	std::string res;
 	res.resize(16);
@@ -101,7 +101,7 @@ inline std::string AESEncryptor<KeySize>::SubBytes(const std::string& state)
 }
 
 template<size_t KeySize>
-inline std::string AESEncryptor<KeySize>::ShiftRows(const std::string& state)
+inline std::string AES<KeySize>::ShiftRows(const std::string& state)
 {
 	std::string res;
 	res.resize(16);
@@ -152,7 +152,7 @@ inline std::string AESEncryptor<KeySize>::ShiftRows(const std::string& state)
 */
 
 template<size_t KeySize>
-inline std::string AESEncryptor<KeySize>::MixColumns(const std::string& state)
+inline std::string AES<KeySize>::MixCols(const std::string& state)
 {
 	auto& s = state;
 	std::string res;
@@ -182,7 +182,7 @@ inline std::string AESEncryptor<KeySize>::MixColumns(const std::string& state)
 }
 
 template<size_t KeySize>
-inline std::string AESEncryptor<KeySize>::GBlock(const std::string& KeyWord, const uint8_t counter)
+inline std::string AES<KeySize>::GBlock(const std::string& KeyWord, const uint8_t counter)
 {
 	// By definition, KeyWord must be of size 4.
 	assert(KeyWord.size() == 4);
@@ -204,26 +204,26 @@ inline std::string AESEncryptor<KeySize>::GBlock(const std::string& KeyWord, con
 }
 
 template<size_t KeySize>
-inline uint8_t AESEncryptor<KeySize>::GMul1(const uint8_t b)
+inline uint8_t AES<KeySize>::GMul1(const uint8_t b)
 {
 	return uint8_t(b);
 }
 
 template<size_t KeySize>
-inline uint8_t AESEncryptor<KeySize>::GMul2(const uint8_t b)
+inline uint8_t AES<KeySize>::GMul2(const uint8_t b)
 {
 	return uint8_t(G2Mul[b]);
 }
 
 template<size_t KeySize>
-inline uint8_t AESEncryptor<KeySize>::GMul3(const uint8_t b)
+inline uint8_t AES<KeySize>::GMul3(const uint8_t b)
 {
 	return uint8_t(G3Mul[b]);
 }
 
 
 template<size_t KeySize>
-inline std::string AESEncryptor<KeySize>::Encrypt()
+inline std::string AES<KeySize>::Encrypt()
 {
 	for (int blk = 0; blk < numBlocks; blk++)
 	{ 
@@ -233,7 +233,7 @@ inline std::string AESEncryptor<KeySize>::Encrypt()
 		{
 			bi = SubBytes(bi);
 			bi = ShiftRows(bi);
-			bi = MixColumns(bi);
+			bi = MixCols(bi);
 			bi = AddRoundKey(bi, SubKeys[i]);
 		}
 
@@ -247,7 +247,7 @@ inline std::string AESEncryptor<KeySize>::Encrypt()
 }
 
 template<>
-inline void AESEncryptor<16U>::GenerateKeys()
+inline void AES<16U>::GenerateKeys()
 {
 	SubKeys.resize(11);
 	SubKeys[0] = key;
@@ -286,20 +286,20 @@ inline void AESEncryptor<16U>::GenerateKeys()
 
 
 template<size_t KeySize>
-inline std::string AESEncryptor<KeySize>::GetKeyWord(const std::string& k, uint8_t w)
+inline std::string AES<KeySize>::GetKeyWord(const std::string& k, uint8_t w)
 {
 	assert(k.size() == 16);
 	return { std::begin(k) + (w * 4), std::begin(k) + (w * 4) + 4 };
 }
 
 template<size_t KeySize>
-inline std::string AESEncryptor<KeySize>::CombineWords(const std::string& w0, const std::string& w1, const std::string& w2, const std::string& w3)
+inline std::string AES<KeySize>::CombineWords(const std::string& w0, const std::string& w1, const std::string& w2, const std::string& w3)
 {
 	return std::string(w0 + w1 + w2 + w3);
 }
 
 template<size_t KeySize>
-inline std::string AESEncryptor<KeySize>::XORStr(const std::string& a, const std::string& b)
+inline std::string AES<KeySize>::XORStr(const std::string& a, const std::string& b)
 {
 	assert(a.size() == b.size());
 
@@ -314,4 +314,41 @@ inline std::string AESEncryptor<KeySize>::XORStr(const std::string& a, const std
 	}
 
 	return res;
+}
+
+template<size_t KeySize>
+inline std::string AES<KeySize>::ISubBytes(const std::string& state)
+{
+	std::string res;
+	res.resize(N);
+
+	for (int i = 0; i < N; i++)
+	{
+		res[i] = ISBox[(uint8_t)(res[i])];
+	}
+
+	return res;
+}
+
+template<size_t KeySize>
+inline std::string AES<KeySize>::IShiftRows(const std::string& state)
+{
+	std::string res;
+	res.resize(N);
+	constexpr uint8_t IShiftIdx[N] = {
+		0, 13, 10, 7, 4, 1, 14, 11, 8, 5, 2, 15, 12, 9, 6, 3
+	};
+
+	for (int i = 0; i < N; i++)
+	{
+		res[i] = state[IShiftIdx[i]];
+	}
+
+	return res;
+}
+
+template<size_t KeySize>
+inline std::string AES<KeySize>::IMixCols(const std::string& state)
+{
+	
 }

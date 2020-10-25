@@ -77,6 +77,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);DEBUG_KEYS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,10 +128,14 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AESEncryptor.h" />
-    <ClInclude Include="AESEncryptor_impl.h" />
+    <ClInclude Include="AES.h" />
+    <ClInclude Include="AES_impl.h" />
+    <ClInclude Include="G11Mul.h" />
+    <ClInclude Include="G13Mul.h" />
+    <ClInclude Include="G14Mul.h" />
     <ClInclude Include="G2Mul.h" />
     <ClInclude Include="G3Mul.h" />
+    <ClInclude Include="G9Mul.h" />
     <ClInclude Include="RC.h" />
     <ClInclude Include="SBox.h" />
   </ItemGroup>
