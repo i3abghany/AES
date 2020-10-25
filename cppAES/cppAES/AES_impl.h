@@ -58,13 +58,13 @@ std::string_view AES<KeySize>::GetBlock(size_t idx) const
 }
 
 template<size_t KeySize>
-void AES<KeySize>::load(const std::string& x)
+void AES<KeySize>::load(const std::string& x, const std::string& key)
 {
-	*this = AES{ x };
+	*this = AES{ x, key };
 }
 
 template<size_t KeySize>
-inline void AES<KeySize>::loadFile(const std::string& fName)
+inline void AES<KeySize>::loadFile(const std::string& fName, const std::string& key)
 {
 	std::ifstream f1(fName);
 	if (!f1)
@@ -73,7 +73,7 @@ inline void AES<KeySize>::loadFile(const std::string& fName)
 	}
 	std::string ss;
 	std::getline(f1, ss, char{ EOF });
-	this->load(ss);
+	this->load(ss, key);
 }
 
 template<size_t KeySize>

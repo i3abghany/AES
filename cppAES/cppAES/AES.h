@@ -23,8 +23,8 @@ public:
 	size_t blocks() const;
 	std::string_view GetBlock(size_t) const;
 
-	void load(const std::string&);
-	void loadFile(const std::string&);
+	void load(const std::string&, const std::string&);
+	void loadFile(const std::string&, const std::string &);
 
 	std::string Encrypt();
 	std::string Decrypt();

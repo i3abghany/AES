@@ -9,15 +9,18 @@
 int main()
 {
 	std::string plainText = "Critical Annihilation";
+	std::string key = "Kung Fu Fighting";
+
 	AES<16U> aes {
-		plainText, "Kung Fu Fighting"
+		plainText, key
 	};
 
 	std::string encryptedText = aes.Encrypt();
-	AES<16U> Daes {
-		encryptedText, "Kung Fu Fighting"
-	};
-	auto decryptedText = Daes.Decrypt();
+
+	aes.load(encryptedText, key);
+
+	auto decryptedText = aes.Decrypt();
+
 	assert(decryptedText == plainText);
 	return 0;
 }
