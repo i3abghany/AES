@@ -221,6 +221,30 @@ inline uint8_t AES<KeySize>::GMul3(const uint8_t b)
 	return uint8_t(G3Mul[b]);
 }
 
+template<size_t KeySize>
+inline uint8_t AES<KeySize>::GMul9(const uint8_t b)
+{
+	return uint8_t(G9Mul[b]);
+}
+
+template<size_t KeySize>
+inline uint8_t AES<KeySize>::GMul11(const uint8_t b)
+{
+	return uint8_t(G11Mul[b]);
+}
+
+template<size_t KeySize>
+inline uint8_t AES<KeySize>::GMul13(const uint8_t b)
+{
+	return uint8_t(G13Mul[b]);
+}
+
+template<size_t KeySize>
+inline uint8_t AES<KeySize>::GMul14(const uint8_t b)
+{
+	return uint8_t(GMul14[b]);
+}
+
 
 template<size_t KeySize>
 inline std::string AES<KeySize>::Encrypt()
@@ -347,8 +371,44 @@ inline std::string AES<KeySize>::IShiftRows(const std::string& state)
 	return res;
 }
 
+
+/*
+	The State array gets multiplied by the inverse of the MixCols matrix in GF(2^8).
+	The inverse matrix is: 
+	| 14 | 11 | 13 | 09 |
+	| 09 | 14 | 11 | 13 |
+	| 13 | 09 | 14 | 11 |
+	| 11 | 13 | 09 | 14 |
+
+*/
+
 template<size_t KeySize>
 inline std::string AES<KeySize>::IMixCols(const std::string& state)
 {
+	auto& s = state;
+	std::string res;
+	res.resize(16);
+
+	res[0] = GMul14(s[0]) ^ GMul11(s[1]) ^ GMul13(s[2]) ^ GMul9(s[3]);
+	res[1] = GMul9(s[0])  ^ GMul14(s[1]) ^ GMul11(s[2]) ^ GMul13(s[3]);
+	res[2] = GMul13(s[0]) ^ GMul9(s[1])  ^ GMul14(s[2]) ^ GMul11(s[3]);
+	res[3] = GMul11(s[0]) ^ GMul13(s[1]) ^ GMul9(s[2])  ^ GMul14(s[3]);
+
+	res[4] = GMul14(s[4]) ^ GMul11(s[5]) ^ GMul13(s[6]) ^ GMul9(s[7]);
+	res[5] = GMul9(s[4])  ^ GMul14(s[5]) ^ GMul11(s[6]) ^ GMul13(s[7]);
+	res[6] = GMul13(s[4]) ^ GMul9(s[5])  ^ GMul14(s[6]) ^ GMul11(s[7]);
+	res[7] = GMul11(s[4]) ^ GMul13(s[5]) ^ GMul9(s[6])  ^ GMul14(s[7]);
+
+	res[8]  = GMul14(s[8]) ^ GMul11(s[9]) ^ GMul13(s[10]) ^ GMul9(s[11]);
+	res[9]  = GMul9(s[8])  ^ GMul14(s[9]) ^ GMul11(s[10]) ^ GMul13(s[11]);
+	res[10] = GMul13(s[8]) ^ GMul9(s[9])  ^ GMul14(s[10]) ^ GMul11(s[11]);
+	res[11] = GMul11(s[8]) ^ GMul13(s[9]) ^ GMul9(s[10])  ^ GMul14(s[11]);
+
+	res[12] = GMul14(s[12]) ^ GMul11(s[13]) ^ GMul13(s[14]) ^ GMul9(s[15]);
+	res[13] = GMul9(s[12])  ^ GMul14(s[13]) ^ GMul11(s[14]) ^ GMul13(s[15]);
+	res[14] = GMul13(s[12]) ^ GMul9(s[13])  ^ GMul14(s[14]) ^ GMul11(s[15]);
+	res[15] = GMul11(s[12]) ^ GMul13(s[13]) ^ GMul9(s[14])  ^ GMul14(s[15]);
+
+	return res;
 	
 }

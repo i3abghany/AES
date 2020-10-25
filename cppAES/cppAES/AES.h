@@ -47,9 +47,13 @@ private:
 	std::string CombineWords(const std::string&, const std::string&,
 							 const std::string&, const std::string&);
 
-	uint8_t GMul1(const uint8_t);
-	uint8_t GMul2(const uint8_t);
-	uint8_t GMul3(const uint8_t);
+	uint8_t GMul1 (const uint8_t);
+	uint8_t GMul2 (const uint8_t);
+	uint8_t GMul3 (const uint8_t);
+	uint8_t GMul9 (const uint8_t);
+	uint8_t GMul11(const uint8_t);
+	uint8_t GMul13(const uint8_t);
+	uint8_t GMul14(const uint8_t);
 
 private:
 	void SplitData(const std::string&);
