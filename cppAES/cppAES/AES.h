@@ -12,7 +12,7 @@
 template <size_t KeySize = 16U>
 class AES
 {
-	static_assert(KeySize == 16U || KeySize == 24U || KeySize == 32U, "Only 16-, 24-, and 32-byte keys are allowed.");
+	static_assert(KeySize == 16U, "Only 16-, 24-, and 32-byte keys are allowed. ATM, only 16-byte keys are accepted.\n");
 private:
 	using StrCIter = std::string::const_iterator;
 	static constexpr size_t N = 16U;  // Block Size.
@@ -58,14 +58,13 @@ private:
 private:
 	void SplitData(const std::string&);
 	std::string XORStr(const std::string&, const std::string&);
-
+	void TrimZeros(std::string&);
 private:
 	/*
 		Data stored in chars (bytes), organized as blocks (each block in a string.)
 		Can either be the the plaintext or cyphertext.
 	*/
 	std::vector<std::string> data; 
-
 	std::string encData;  // Encrypted data produced by Encrypt() is stored here.
 	std::string decData;  // Decrypted data produced by Decrypt() is stored here.
 	
@@ -74,7 +73,6 @@ private:
 
 	size_t numBlocks;
 	uint8_t numRounds;
-
 
 	static uint8_t SBox [(1U << 8)];
 	static uint8_t G2Mul[(1U << 8)];

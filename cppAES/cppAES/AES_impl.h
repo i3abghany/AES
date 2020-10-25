@@ -18,7 +18,7 @@ AES<KeySize>::AES(const std::string& inputData, const std::string& key)
 	}
 	this->key = std::move(key);
 	this->numBlocks = (inputData.size() / N) + (inputData.size() % N ? 1 : 0);
-	this->data.resize(this->numBlocks, std::string(N, '0'));
+	this->data.resize(this->numBlocks, std::string(N, EOF));
 	SplitData(inputData);
 
 	this->numRounds = (KeySize == 16U) ? 10 :
@@ -242,7 +242,7 @@ inline uint8_t AES<KeySize>::GMul13(const uint8_t b)
 template<size_t KeySize>
 inline uint8_t AES<KeySize>::GMul14(const uint8_t b)
 {
-	return uint8_t(GMul14[b]);
+	return uint8_t(G14Mul[b]);
 }
 
 
@@ -268,6 +268,32 @@ inline std::string AES<KeySize>::Encrypt()
 	}
 
 	return this->encData;
+}
+
+template<size_t KeySize>
+inline std::string AES<KeySize>::Decrypt()
+{
+	this->decData.reserve(N * 16);
+	for (int blk = 0; blk < numBlocks; blk++)
+	{
+		auto& bi = data[blk];
+
+		bi = AddRoundKey(bi, SubKeys[numRounds]);
+		bi = IShiftRows(bi);
+		bi = ISubBytes(bi);
+
+		for (int i = numRounds - 1; i > 0; i--)
+		{
+			bi = AddRoundKey(bi, SubKeys[i]);
+			bi = IMixCols(bi);
+			bi = IShiftRows(bi);
+			bi = ISubBytes(bi);
+		}
+		bi = AddRoundKey(bi, SubKeys[0]);
+		decData += bi;
+	}
+	TrimZeros(decData);
+	return decData;
 }
 
 template<>
@@ -341,6 +367,21 @@ inline std::string AES<KeySize>::XORStr(const std::string& a, const std::string&
 }
 
 template<size_t KeySize>
+inline void AES<KeySize>::TrimZeros(std::string& str)
+{
+	size_t endpos = str.find_last_not_of(EOF);
+	size_t startpos = str.find_first_not_of(EOF);
+	if (std::string::npos != endpos)
+	{
+		str = str.substr(0, endpos + 1);
+		str = str.substr(startpos);
+	}
+	else {
+		str.erase(std::remove(std::begin(str), std::end(str), ' '), std::end(str));
+	}
+}
+
+template<size_t KeySize>
 inline std::string AES<KeySize>::ISubBytes(const std::string& state)
 {
 	std::string res;
@@ -348,7 +389,7 @@ inline std::string AES<KeySize>::ISubBytes(const std::string& state)
 
 	for (int i = 0; i < N; i++)
 	{
-		res[i] = ISBox[(uint8_t)(res[i])];
+		res[i] = ISBox[(uint8_t)(state[i])];
 	}
 
 	return res;
