@@ -1,26 +1,10 @@
-----------------------------------------------------------------------------------
--- Engineer: Mahmoud Abd Al-Ghany 
--- 
--- Create Date: 10/26/2020 01:07:08 AM
--- Design Name: 
--- Module Name: AESEncryptor - Struct
--- Project Name: vhdlAES
--- Tool Versions: Vivado 2019.1
--- Description: The top level module of the AES encryptor module.
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
 
-entity AESEncryptor is
-    Port ( PlainText : in STD_LOGIC_VECTOR (127 downto 0);
-           key : in STD_LOGIC_VECTOR (127 downto 0);
-           CypherText : out STD_LOGIC_VECTOR (127 downto 0));
-end AESEncryptor;
+entity ControllerTB is
+end ControllerTB;
 
-architecture Struct of AESEncryptor is
+architecture Behavioral of ControllerTB is
     SIGNAL clk : STD_LOGIC;
     SIGNAL DataByte: STD_LOGIC_VECTOR (7 downto 0);
     SIGNAL reset: STD_LOGIC;
@@ -38,8 +22,9 @@ architecture Struct of AESEncryptor is
            ByteReady : out STD_LOGIC;
            BlockReady : out STD_LOGIC); 
     end component;
+
 begin
-    DUT: Controller port map(clk => clk, DataByte => DataByte, reset => reset, 
+        DUT: Controller port map(clk => clk, DataByte => DataByte, reset => reset, 
                              en => en, ByteOut => ByteOut, ByteReady => ByteReady,
                              BlockReady => BlockReady);
     process begin
@@ -91,5 +76,4 @@ begin
     wait;
     
     end process;
-    
-end Struct;
+end Behavioral;
