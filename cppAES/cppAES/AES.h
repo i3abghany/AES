@@ -8,7 +8,6 @@
 #include <cstdint>
 #include <array>
 #include <cassert>
-#include <omp.h>
 
 template <size_t KeySize = 16U>
 class AES
@@ -26,14 +25,11 @@ public:
 
 	void load(const std::string&, const std::string&);
 	void loadFile(const std::string&, const std::string &);
-	
+
 	std::string Encrypt();
 	std::string Decrypt();
 
 private:
-
-	void EncryptBlock(const size_t);
-	void DecryptBlock(const size_t);
 
 	void GenerateKeys();
 

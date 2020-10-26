@@ -2,7 +2,6 @@
 #include <vector>
 #include <chrono>
 #include <iomanip>
-#include <omp.h>
 #include <string_view>
 #include "AES.h"
 

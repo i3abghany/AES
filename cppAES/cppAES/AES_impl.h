@@ -249,13 +249,24 @@ inline uint8_t AES<KeySize>::GMul14(const uint8_t b)
 template<size_t KeySize>
 inline std::string AES<KeySize>::Encrypt()
 {
-	this->encData.reserve(N * 16);
-	for (int i = 0; i < numBlocks; i++)
-	{
-		EncryptBlock(i);
-		this->encData.append(data[i]);
+	for (int blk = 0; blk < numBlocks; blk++)
+	{ 
+		auto &bi = data[blk];
+		bi = AddRoundKey(bi, SubKeys[0]);
+		for (int i = 1; i < numRounds; i++)
+		{
+			bi = SubBytes(bi);
+			bi = ShiftRows(bi);
+			bi = MixCols(bi);
+			bi = AddRoundKey(bi, SubKeys[i]);
+		}
+
+		bi = SubBytes(bi);
+		bi = ShiftRows(bi);
+		bi = AddRoundKey(bi, SubKeys[numRounds]);
+		this->encData.append(bi);
 	}
-	
+
 	return this->encData;
 }
 
@@ -265,48 +276,24 @@ inline std::string AES<KeySize>::Decrypt()
 	this->decData.reserve(N * 16);
 	for (int blk = 0; blk < numBlocks; blk++)
 	{
-		DecryptBlock(blk);
-		this->decData.append(data[blk]);
-	}
-	TrimZeros(this->decData);
-	return this->decData;
-}
+		auto& bi = data[blk];
 
-template<size_t KeySize>
-inline void AES<KeySize>::EncryptBlock(const size_t blk)
-{
-	auto& bi = data[blk];
-	bi = AddRoundKey(bi, SubKeys[0]);
-	for (int i = 1; i < numRounds; i++)
-	{
-		bi = SubBytes(bi);
-		bi = ShiftRows(bi);
-		bi = MixCols(bi);
-		bi = AddRoundKey(bi, SubKeys[i]);
-	}
-
-	bi = SubBytes(bi);
-	bi = ShiftRows(bi);
-	bi = AddRoundKey(bi, SubKeys[numRounds]);
-}
-
-template<size_t KeySize>
-inline void AES<KeySize>::DecryptBlock(const size_t blk)
-{
-	auto& bi = data[blk];
-
-	bi = AddRoundKey(bi, SubKeys[numRounds]);
-	bi = IShiftRows(bi);
-	bi = ISubBytes(bi);
-
-	for (int i = numRounds - 1; i > 0; i--)
-	{
-		bi = AddRoundKey(bi, SubKeys[i]);
-		bi = IMixCols(bi);
+		bi = AddRoundKey(bi, SubKeys[numRounds]);
 		bi = IShiftRows(bi);
 		bi = ISubBytes(bi);
+
+		for (int i = numRounds - 1; i > 0; i--)
+		{
+			bi = AddRoundKey(bi, SubKeys[i]);
+			bi = IMixCols(bi);
+			bi = IShiftRows(bi);
+			bi = ISubBytes(bi);
+		}
+		bi = AddRoundKey(bi, SubKeys[0]);
+		decData += bi;
 	}
-	bi = AddRoundKey(bi, SubKeys[0]);
+	TrimZeros(decData);
+	return decData;
 }
 
 template<>
