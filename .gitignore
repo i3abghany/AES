@@ -213,6 +213,9 @@ csx/
 ecf/
 rcf/
 
+**/Debug
+**/Release
+
 # Windows Store app package directories and files
 AppPackages/
 BundleArtifacts/

@@ -11,7 +11,7 @@ int main()
 	std::string plainText = "Critical Annihilation";
 	std::string key = "Kung Fu Fighting";
 
-	AES<16U> aes {
+	AES<16U> aes{
 		plainText, key
 	};
 
