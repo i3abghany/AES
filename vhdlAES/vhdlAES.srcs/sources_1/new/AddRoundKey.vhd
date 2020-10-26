@@ -10,6 +10,5 @@ end AddRoundKey;
 architecture Behavioral of AddRoundKey is
 
 begin
-
-
+    StateOut <= StateIn XOR key;
 end Behavioral;

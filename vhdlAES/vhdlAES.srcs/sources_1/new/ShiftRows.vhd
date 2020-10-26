@@ -7,8 +7,26 @@ entity ShiftRows is
 end ShiftRows;
 
 architecture Behavioral of ShiftRows is
-
+    
 begin
-
+    StateOut((8 *  1) - 1 DOWNTO 8 * 0) <= StateIn((8 *  1) - 1 DOWNTO 8 *  0);
+    StateOut((8 *  2) - 1 DOWNTO 8 * 1) <= StateIn((8 *  6) - 1 DOWNTO 8 *  5);
+    StateOut((8 *  3) - 1 DOWNTO 8 * 2) <= StateIn((8 * 11) - 1 DOWNTO 8 * 10);
+    StateOut((8 *  4) - 1 DOWNTO 8 * 3) <= StateIn((8 * 16) - 1 DOWNTO 8 * 15);
+    
+    StateOut((8 *  5) - 1 DOWNTO 8 * 0) <= StateIn((8 *  5) - 1 DOWNTO 8 *  4);
+    StateOut((8 *  6) - 1 DOWNTO 8 * 1) <= StateIn((8 * 10) - 1 DOWNTO 8 *  9);
+    StateOut((8 *  7) - 1 DOWNTO 8 * 2) <= StateIn((8 * 15) - 1 DOWNTO 8 * 14);
+    StateOut((8 *  8) - 1 DOWNTO 8 * 3) <= StateIn((8 *  4) - 1 DOWNTO 8 *  3);
+    
+    StateOut((8 *  9) - 1 DOWNTO 8 * 0) <= StateIn((8 *  9) - 1 DOWNTO 8 * 8);
+    StateOut((8 * 10) - 1 DOWNTO 8 * 1) <= StateIn((8 * 14) - 1 DOWNTO 8 * 13);
+    StateOut((8 * 11) - 1 DOWNTO 8 * 2) <= StateIn((8 *  3) - 1 DOWNTO 8 * 2);
+    StateOut((8 * 12) - 1 DOWNTO 8 * 3) <= StateIn((8 *  8) - 1 DOWNTO 8 * 7);
+    
+    StateOut((8 * 13) - 1 DOWNTO 8 * 0) <= StateIn((8 * 13) - 1 DOWNTO 8 * 12);
+    StateOut((8 * 14) - 1 DOWNTO 8 * 1) <= StateIn((8 * 2) - 1 DOWNTO 8 *  1);
+    StateOut((8 * 15) - 1 DOWNTO 8 * 2) <= StateIn((8 * 7) - 1 DOWNTO 8 *  6);
+    StateOut((8 * 16) - 1 DOWNTO 8 * 3) <= StateIn((8 * 12) - 1 DOWNTO 8 * 11);
 
 end Behavioral;

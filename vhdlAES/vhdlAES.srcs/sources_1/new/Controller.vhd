@@ -57,7 +57,7 @@ begin
     end process;
     
     -- Output Logic.
-    process(CurrentState, NextState, Counter) begin
+    process(CurrentState, NextState, Counter, DataByte) begin
         case (CurrentState) is 
             when IDLE => 
                 ByteOut <= X"00";
