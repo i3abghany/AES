@@ -31,6 +31,9 @@ public:
 
 private:
 
+	void EncryptBlock(const size_t);
+	void DecryptBlock(const size_t);
+
 	void GenerateKeys();
 
 	std::string AddRoundKey(const std::string&, const std::string&);
