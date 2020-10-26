@@ -5,6 +5,7 @@
 #include <string_view>
 #include "AES.h"
 
+
 int main()
 {
 	std::string plainText = "Critical Annihilation";
