@@ -22,7 +22,8 @@ architecture Behavioral of MixColWord is
     subtype ThirdByte  is INTEGER RANGE (8 * 3) - 1 DOWNTO (8 * 2);
     subtype FourthByte is INTEGER RANGE (8 * 4) - 1 DOWNTO (8 * 3);
     
-    SIGNAL Mul1_1: STD_LOGIC_VECTOR(7 DOWNTO 0);
+    -- Mul(Multiplicand)_(ByteNumber)
+    SIGNAL Mul1_1: STD_LOGIC_VECTOR(7 DOWNTO 0);  
     SIGNAL Mul2_1: STD_LOGIC_VECTOR(7 DOWNTO 0);
     SIGNAL Mul3_1: STD_LOGIC_VECTOR(7 DOWNTO 0);
     
