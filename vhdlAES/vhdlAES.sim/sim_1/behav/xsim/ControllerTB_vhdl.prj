@@ -1,0 +1,9 @@
+# compile vhdl design source files
+vhdl2008 xil_defaultlib  \
+"../../../../vhdlAES.srcs/sources_1/new/Controller.vhd" \
+
+vhdl xil_defaultlib  \
+"../../../../vhdlAES.srcs/sources_1/new/ControllerTB.vhd" \
+
+# Do not sort compile order
+nosort
