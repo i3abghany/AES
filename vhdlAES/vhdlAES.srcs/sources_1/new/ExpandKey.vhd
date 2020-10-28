@@ -29,9 +29,11 @@ begin
     G: GBlock port map(WordIn => KeyIn(FourthWord), WordOut => GWord, RCon => RCon);
     
     XORW1 <= GWord XOR KeyIn(FirstWord);
-    XORW2 <= XORW1 XOR KeyIn(SecondWord);
-    XORW3 <= XORW2 XOR KeyIn(ThirdWord);
-    XORW4 <= XORW3 XOR KeyIn(FourthWord);
-    
+    XORW2 <= (GWord XOR KeyIn(FirstWord)) XOR KeyIn(SecondWord);
+    XORW3 <= (GWord XOR KeyIn(FirstWord)) XOR (KeyIn(SecondWord) XOR KeyIn(ThirdWord));
+    XORW4 <= (GWord XOR KeyIn(FirstWord)) XOR (KeyIn(SecondWord) XOR KeyIn(ThirdWord))
+              XOR KeyIn(FourthWord);    
     KeyOut <= XORW1 & XORW2 & XORW3 & XORW4;
+    
+
 end Behavioral;
