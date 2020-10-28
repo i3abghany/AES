@@ -17,10 +17,10 @@ architecture Behavioral of MixColWord is
            ByteOut : out STD_LOGIC_VECTOR (7 downto 0));
     end component;
 
-    subtype FirstByte  is INTEGER RANGE (8 * 1) - 1 DOWNTO (8 * 0);
-    subtype SecondByte is INTEGER RANGE (8 * 2) - 1 DOWNTO (8 * 1);
-    subtype ThirdByte  is INTEGER RANGE (8 * 3) - 1 DOWNTO (8 * 2);
-    subtype FourthByte is INTEGER RANGE (8 * 4) - 1 DOWNTO (8 * 3);
+    subtype FirstByte  is INTEGER RANGE (8 * 4) - 1 DOWNTO (8 * 3);
+    subtype SecondByte is INTEGER RANGE (8 * 3) - 1 DOWNTO (8 * 2);
+    subtype ThirdByte  is INTEGER RANGE (8 * 2) - 1 DOWNTO (8 * 1);
+    subtype FourthByte is INTEGER RANGE (8 * 1) - 1 DOWNTO (8 * 0);
     
     -- Mul(Multiplicand)_(ByteNumber)
     SIGNAL Mul1_1: STD_LOGIC_VECTOR(7 DOWNTO 0);  

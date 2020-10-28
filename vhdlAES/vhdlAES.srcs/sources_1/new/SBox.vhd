@@ -266,6 +266,7 @@ begin
             when X"FD" => ByteOut <= X"54";
             when X"FE" => ByteOut <= X"BB";
             when X"FF" => ByteOut <= X"16";
+            when others => ByteOut <= X"00";
         end case;
     end process;
 end Behavioral;
