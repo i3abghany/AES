@@ -15,7 +15,7 @@ end Controller;
 architecture Behavioral of Controller is
     TYPE State is (IDLE, RECEIVE, OPERATE);
     SIGNAL CurrentState, NextState: State;
-    SIGNAL Counter: STD_LOGIC_VECTOR(4 DOWNTO 0);
+    SIGNAL Counter: STD_LOGIC_VECTOR(5 DOWNTO 0);
 begin
     
     process(clk, reset) begin
@@ -36,7 +36,7 @@ begin
                     NextState <= IDLE;
                 end if;
             when RECEIVE => 
-                if (Counter = B"01111") then
+                if (Counter = B"011111") then
                     NextState <= OPERATE;
                 else 
                     NextState <= RECEIVE;
@@ -48,7 +48,7 @@ begin
     
     process(clk, reset) begin
         if (reset = '1') then
-            Counter <= B"00000";
+            Counter <= B"000000";
         elsif (rising_edge(clk)) then
             if (NextState = RECEIVE) then
                 Counter <= STD_LOGIC_VECTOR(UNSIGNED(Counter) + 1);
