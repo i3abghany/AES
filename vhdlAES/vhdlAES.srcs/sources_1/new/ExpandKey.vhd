@@ -14,10 +14,10 @@ architecture Behavioral of ExpandKey is
            RCon : in STD_LOGIC_VECTOR (7 downto 0));
     end component;
     
-    subtype FirstWord  is INTEGER RANGE (32 * 1) - 1 DOWNTO (32 * 0);
-    subtype SecondWord is INTEGER RANGE (32 * 2) - 1 DOWNTO (32 * 1);
-    subtype ThirdWord  is INTEGER RANGE (32 * 3) - 1 DOWNTO (32 * 2);
-    subtype FourthWord is INTEGER RANGE (32 * 4) - 1 DOWNTO (32 * 3);
+    subtype FirstWord  is INTEGER RANGE (32 * 4) - 1 DOWNTO (32 * 3);
+    subtype SecondWord is INTEGER RANGE (32 * 3) - 1 DOWNTO (32 * 2);
+    subtype ThirdWord  is INTEGER RANGE (32 * 2) - 1 DOWNTO (32 * 1);
+    subtype FourthWord is INTEGER RANGE (32 * 1) - 1 DOWNTO (32 * 0);
     
     SIGNAL GWord: STD_LOGIC_VECTOR(31 DOWNTO 0);
     
