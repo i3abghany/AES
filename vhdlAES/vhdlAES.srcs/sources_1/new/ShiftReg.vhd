@@ -19,5 +19,5 @@ begin
             end if;
         end if;
     end process;
-    
+    DataOut <= Data;
 end Behavioral;

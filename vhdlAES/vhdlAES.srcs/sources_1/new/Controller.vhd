@@ -36,7 +36,7 @@ begin
                     NextState <= IDLE;
                 end if;
             when RECEIVE => 
-                if (Counter = B"011111") then
+                if (Counter = B"100000") then
                     NextState <= OPERATE;
                 else 
                     NextState <= RECEIVE;
