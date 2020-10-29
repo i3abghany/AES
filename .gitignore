@@ -445,3 +445,8 @@ FodyWeavers.xsd
 !*.elf
 !*.bmm
 !*.xmp
+**/vhdlAES.hw
+**/vhdlAES.ip_user_files
+**/vhdlAES.runs
+**/vhdlAES.sim
+**/vhdlAES.cache
