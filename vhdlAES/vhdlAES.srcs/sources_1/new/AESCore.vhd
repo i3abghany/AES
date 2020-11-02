@@ -63,6 +63,11 @@ architecture Struct of AESCore is
                q : out STD_LOGIC_VECTOR(WIDTH - 1 DOWNTO 0));
     end component;
     
+    component RConGen is
+        Port ( RoundCount : in STD_LOGIC_VECTOR (4 downto 0);
+               RCon : out STD_LOGIC_VECTOR (7 downto 0));
+    end component;
+    
     CONSTANT WIDTH: INTEGER := 128;
     SIGNAL InitialKeyAdd: STD_LOGIC_VECTOR(WIDTH - 1 DOWNTO 0);
     SIGNAL IntermediateK0: STD_LOGIC_VECTOR(WIDTH - 1 DOWNTO 0);
@@ -77,27 +82,14 @@ architecture Struct of AESCore is
     SIGNAL StateInput: STD_LOGIC_VECTOR(WIDTH - 1 DOWNTO 0);
     SIGNAL RCon: STD_LOGIC_VECTOR(7 DOWNTO 0);
 begin
-    
-    process (all) begin 
-        case (Counter) is
-            when B"00000" => RCon <= X"02";
-            when B"00001" => RCon <= X"04";
-            when B"00010" => RCon <= X"08";
-            when B"00011" => RCon <= X"10";
-            when B"00100" => RCon <= X"20";
-            when B"00101" => RCon <= X"40";
-            when B"00110" => RCon <= X"80";
-            when B"00111" => RCon <= X"1b";
-            when B"01000" => RCon <= X"36";
-            when others => RCon <= X"00"; 
-        end case;
-    end process;
-    
+
     A1: AddRoundKey port map(StateIn => PlainText, key => key, StateOut => InitialKeyAdd);
     E1: ExpandKey port map(KeyIn => Key, RCon => X"01", KeyOut => IntermediateK0);
     
     M1: Mux2 port map(a0 => IntermediateK0, a1 => PrevRoundKey, s => s, y => KeyInput);
     M2: Mux2 port map(a0 => InitialKeyAdd, a1 => PrevRoundState, s => s, y => StateInput);
+
+    RCG: RConGen port map(RoundCount => Counter, RCon => RCon);
         
     R1: Round port map(
         StateIn => StateInput, 
